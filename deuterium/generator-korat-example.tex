@@ -1,0 +1,173 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=0.9},
+  gridBox/.style={rectangle, opacity=0, draw=red},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\small},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\small},
+  anno/.style={font=\footnotesize},
+]
+
+  %%
+  %%  orig RB tree  ->  RB tree after generator
+  %%                 -----/
+  %%           <-----
+  %%  start searching .. incorrect .. correct
+  %%
+  %%  invariants  X          X           V
+  %% repOk
+  %%  post conds  X          V           V
+
+  \DefMacro{wGraph}{27em}
+  \DefMacro{hGenerator}{13ex}
+  \DefMacro{hKorat}{19ex}
+  \DefMacro{wTree}{5.5em}
+  \DefMacro{hTree}{13ex}
+  \DefMacro{xshiftTree}{0.5em}
+
+  \node (g-Generator) at (0, 0) [gridBox, minimum width=\UseMacro{wGraph}, minimum height=\UseMacro{hGenerator}] {};
+  \node (g-Korat) [below = 3ex of g-Generator.south] [gridBox, minimum width=\UseMacro{wGraph}, minimum height=\UseMacro{hKorat}] {};
+
+  \node (g-TreePreInvocation) [right = 0em of g-Generator.west] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-TreeAfterGenerator) [left = 0em of g-Generator.east] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-TreeKoratStart) [below right = 0 and 5em of g-Korat.north west] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-TreeKoratEnd) [below left = 0 and 0 of g-Korat.north east] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (p-TreeKoratMid) at ($(g-TreeKoratStart.east)!0.5!(g-TreeKoratEnd.west)$) [coordinate] {};
+  \node (g-TreeKoratMid) [below = 0 of g-Korat.north -| p-TreeKoratMid] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+
+  \tikzset{level distance=4ex}
+  \tikzstyle{level 1}=[sibling distance=1.6em]
+  \tikzstyle{level 2}=[sibling distance=0.8em]
+  \tikzset{edge from parent/.style={draw, -latex}}
+
+  \tikzset{redNode/.style={circle, draw=red, line width=1pt, inner sep=0, minimum size=1em, font=\footnotesize, text=red}}
+  \tikzset{blackNode/.style={circle, draw=black, inner sep=0, minimum size=1em, font=\footnotesize, text=black}}
+
+  % tree pre invocation
+  \node (n-TreePreInvocationRoot) [below = 1ex of g-TreePreInvocation.north, xshift=\UseMacro{xshiftTree}] [blackNode] {4}
+  child[left] {node [redNode] {1}
+    child[left] {node [blackNode] {0}}
+    child[right] {node (n-TreePreInvocation-01) [blackNode] {3}}
+  }
+  child[right] {node [blackNode] {5}
+  };
+
+  % tree pre invocation
+  \node (n-TreeAfterGeneratorRoot) [below = 1ex of g-TreeAfterGenerator.north, xshift=\UseMacro{xshiftTree}] [blackNode] {}
+  child[left] {node [redNode] {}
+    child[left] {node [blackNode] {}}
+    child[right] {node [blackNode] {}}
+  }
+  child[right] {node [redNode] {}
+    child[left] {node [blackNode] {}}
+  };
+
+  % tree korat start
+  \node (n-TreeKoratStartRoot) [below = 1ex of g-TreeKoratStart.north, xshift=\UseMacro{xshiftTree}] [blackNode] {0}
+  child[left] {node [redNode] {0}
+    child[left] {node [blackNode] {0}}
+    child[right] {node [blackNode] {0}}
+  }
+  child[right] {node [redNode] {0}
+    child[left] {node [blackNode] {0}}
+  };
+
+  % tree korat mid
+  \node (n-TreeKoratMidRoot) [below = 1ex of g-TreeKoratMid.north, xshift=\UseMacro{xshiftTree}] [blackNode] {0}
+  child[left] {node [redNode] {1}
+    child[left] {node [blackNode] {3}}
+    child[right] {node [blackNode] {4}}
+  }
+  child[right] {node [redNode] {2}
+    child[left] {node [blackNode] {5}}
+  };
+
+  % tree korat end
+  \node (n-TreeKoratEndRoot) [below = 1ex of g-TreeKoratEnd.north, xshift=\UseMacro{xshiftTree}] [blackNode] {3}
+  child[left] {node [redNode] {1}
+    child[left] {node [blackNode] {0}}
+    child[right] {node (n-TreeKoratEndLowest) [blackNode] {2}}
+  }
+  child[right] {node [redNode] {5}
+    child[left] {node [blackNode] {4}}
+  };
+  \node (p-TreeKoratEndLowest) [below = 1ex of n-TreeKoratEndLowest.south] [coordinate] {};
+
+  % arrows
+  \node (p-Midway) at ($(g-Generator.south)!0.5!(g-Korat.north)$) [coordinate] {};
+
+  \draw [->] (g-TreePreInvocation.east) to node [anno, above, pos=0.1] {add(2)} node (anno-Generate) [anno, above, pos=0.6] {\makecell{generate a red black tree\\with 6 nodes}} (g-TreeAfterGenerator.west);
+  \draw [->, rounded corners] (g-TreeAfterGenerator.south) -- (g-TreeAfterGenerator.south |- p-Midway) -| (g-TreeKoratStart.north);
+
+  \foreach \l/\r in {g-TreeKoratStart/g-TreeKoratMid, g-TreeKoratMid/g-TreeKoratEnd} {
+    \draw ($(\l.east) + (0.25em, 0)$) -- ($(\l.east)!0.35!(\r.west)$);
+    \draw [dotted] ($(\l.east)!0.35!(\r.west)$) -- ($(\l.east)!0.75!(\r.west)$);
+    \draw [->] ($(\l.east)!0.75!(\r.west)$) -- ($(\r.west) + (0.5em, 0)$);
+  }
+
+  % repOk
+  \newcommand{\textTrue}{$\checkmark$}
+  \newcommand{\textFalse}{$\times$}
+
+  \DefMacro{xshiftStart}{2em}
+
+  \node (p-Invariant) [above = 4ex of g-Korat.south] [coordinate] {};
+  \node (p-Postcond) [above = 2ex of g-Korat.south] [coordinate] {};
+  \node (p-RepOk) [above = 0 of g-Korat.south] [coordinate] {};
+
+  \node (b-PostcondText) [right = 0 of g-Korat.west |- p-Postcond] [box, draw=none] {\postcond{s}};
+  \node (b-InvariantText) [left = 0 of b-PostcondText.east |- p-Invariant] [box, draw=none] {invariants};
+  \node (b-RepOkText) [left = 0 of b-PostcondText.east |- p-RepOk] [box, draw=none] {\koratPredicate};
+
+  \node (p-Between-Start-Mid) at ($(b-PostcondText.east)!0.33!(g-Korat.east)$) [coordinate] {};
+  \node (p-Between-Mid-End) at ($(b-PostcondText.east)!0.67!(g-Korat.east)$) [coordinate] {};
+
+  \node (p-LabelForStart) at ($(b-PostcondText.east)!0.5!(p-Between-Start-Mid)$) [coordinate] {};
+  \node (b-InvariantStart) at (p-Invariant -| p-LabelForStart) [box, draw=none] {\textFalse};
+  \node (b-PostcondStart) at (p-Postcond -| p-LabelForStart) [box, draw=none] {\textFalse};
+  \node (b-RepOkStart) at (p-RepOk -| p-LabelForStart) [box, draw=none] {\textFalse};
+
+  \node (p-LabelForMid) at ($(p-Between-Start-Mid)!0.5!(p-Between-Mid-End)$) [coordinate] {};
+  \node (b-InvariantMid) at (p-Invariant -| p-LabelForMid) [box, draw=none] {\textFalse};
+  \node (b-PostcondMid) at (p-Postcond -| p-LabelForMid) [box, draw=none] {\textTrue};
+  \node (b-RepOkMid) at (p-RepOk -| p-LabelForMid) [box, draw=none] {\textFalse};
+
+  \node (p-LabelForEnd) at ($(p-Between-Mid-End)!0.5!(g-Korat.east)$) [coordinate] {};
+  \node (b-InvariantEnd) at (p-Invariant -| p-LabelForEnd) [box, draw=none] {\textTrue};
+  \node (b-PostcondEnd) at (p-Postcond -| p-LabelForEnd) [box, draw=none] {\textTrue};
+  \node (b-RepOkEnd) at (p-RepOk -| p-LabelForEnd) [box, draw=none] {\textTrue};
+
+  % highlight solution
+  %% \node (b-Solution) [fit=(g-TreeKoratEnd.north west)(g-TreeKoratEnd.north east)(p-TreeKoratEndLowest.south)] [box, inner sep=0, draw=red!50] {};
+  %% \node (b-SolutionText) [below = 0 of b-Solution |- b-RepOkEnd.south] [box, draw=none] {solution};
+
+  % boxes with labels
+  \tikzset{fillDeclarative/.style={fill=blue!10}}
+  \tikzset{fillGenerator/.style={fill=yellow!10}}
+
+  \node (p-GeneratorBoxWest) [right = 3em of g-TreePreInvocation.east] [coordinate] {};
+  \node (p-GeneratorBoxSouthWest) at (p-GeneratorBoxWest |- g-Generator.south) [coordinate] {};
+  \node (p-GeneratorBoxNorthWest) at (p-GeneratorBoxWest |- g-Generator.north) [coordinate] {};
+  \draw [rounded corners] (g-TreeAfterGenerator.north east) rectangle (p-GeneratorBoxSouthWest);
+  \node (b-GeneratorText) [above right = 0 and 0.3em of p-GeneratorBoxNorthWest] [box, fillGenerator] {generator};
+
+  \node (p-SolverBoxSouthWest) at (b-PostcondText.west |- b-RepOkText.south) [coordinate] {};
+  \node (p-SolverBoxNorthEast) at (g-Korat.north east) [coordinate] {};
+  \node (p-SolverBoxNorthWest) at (g-Korat.north west) [coordinate] {};
+  \draw [rounded corners] (p-SolverBoxNorthEast) rectangle (p-SolverBoxSouthWest);
+  \node (b-SolverText) [above right = 0 and 0.3em of p-SolverBoxNorthWest] [box, fillDeclarative] {\searchbasedsol};
+
+  % grid on the repOk
+  \tikzset{repOkGrid/.style={draw=black!60}}
+  \node (p-Between-Invariant-Postcond) at ($(b-InvariantText.south)!0.5!(b-PostcondText.north)$) [coordinate] {};
+  \node (p-Between-Postcond-RepOk) at ($(b-PostcondText.south)!0.5!(b-RepOkText.north)$) [coordinate] {};
+  \foreach \x in {b-InvariantText.north, p-Between-Invariant-Postcond, p-Between-Postcond-RepOk} {
+    \draw [repOkGrid] (\x -| p-SolverBoxSouthWest) to (\x -| p-SolverBoxNorthEast);
+  }
+
+  \foreach \y in {b-InvariantText.east, p-Between-Start-Mid, p-Between-Mid-End} {
+    \draw [repOkGrid] (b-InvariantText.north -| \y) to (p-SolverBoxSouthWest.north -| \y);
+  }
+
+
+\end{tikzpicture}

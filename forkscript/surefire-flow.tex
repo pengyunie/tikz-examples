@@ -1,0 +1,34 @@
+\begin{tikzpicture}[
+  thick, scale=0.88,
+  every node/.style={scale=0.54},
+  label/.style={rectangle, scale=1.5},
+  stacked/.style={rectangle, draw=black, scale=1.5,
+    minimum width=28mm, minimum height=6mm},
+  marker/.style={circle, inner sep=0mm, radius=0mm, fill=none, draw=none, opacity=0},
+]
+
+  \node at (0,0) (mFS) [marker] {};
+  \node [below = 0mm of mFS] (lFS) [label] {\CodeIn{\aForkStarter}};
+
+  \node [above = 0mm of mFS] (lFSJVM) [stacked, minimum height=12mm] {JVM};
+  \node [above = 0mm of lFSJVM.north] (lFSEtc) [stacked] {\rotatebox{270}{\dots}};
+  \node [above = 0mm of lFSEtc.north] (lFSExe) [stacked, fill=red!10] {Executor};
+
+  \node [right = 28mm of mFS] (mTF) [marker] {};
+  \node at (mTF |- lFSExe.east) (lTF) [label, draw=black, fill=red!10, minimum size=7mm, font=\scriptsize] {config};
+
+  \node [right = 28mm of mTF] (mFP) [marker] {};
+  \node [below = 0mm of mFP] (lFP) [label] {\CodeIn{\aForkBooter}};
+  
+  \node [above = 0mm of mFP] (lFPJVM) [stacked, minimum height=12mm] {JVM};
+  \node [above = 0mm of lFPJVM.north] (lFPSfclass) [stacked, fill=red!10] {\Surefire Classes};
+  \node [above = 0mm of lFPSfclass.north] (lFPJunitclass) [stacked] {\Junit Classes};
+  \node [above = 0mm of lFPJunitclass.north] (lFPAppclass) [stacked] {App Classes};
+
+  \def\myshift#1{\raisebox{-2mm}}
+  \draw [->, bend left, postaction={decorate,decoration={text along path,text align=center,raise=1mm,text={|\tiny\ttfamily|(1)~SERIALIZE}}}] (lFSExe.north east) to (lTF);
+  \draw [->, bend right, postaction={decorate,decoration={text along path,text align=center,raise=-2mm,text={|\tiny\ttfamily|(3)~DESERIALIZE}}}] (lTF) to (lFPSfclass.south west);
+  \draw [->, bend right, postaction={decorate,decoration={text along path,text align=center,raise=-2mm,text={|\scriptsize\ttfamily|(2)~SPAWN}}}] ($(lFSExe.north east)!0.2!(lFSExe.south east)$) to ($(lFPJVM.north west)!0.45!(lFPJVM.south west)$);
+  \draw [bend right, postaction={decorate,decoration={text along path,text align=center,raise=-2mm,text={|\scriptsize\ttfamily|(4)~WAIT~results}}}]  (lFSExe.south east) to ($(lFPJVM.north west)!0.75!(lFPJVM.south west)$);
+
+\end{tikzpicture}

@@ -1,0 +1,136 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=0.9},
+  gridBox/.style={rectangle, opacity=0, draw=red},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\small},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\small},
+  anno/.style={font=\footnotesize},
+]
+
+  %%
+  %%  orig RB tree  ->  RB tree after generator       new RB tree
+  %%                 -----/                               ^
+  %%           <-----                                     |
+  %%  root = #0
+  %%  Node.left = ...
+  %%  Node.right = ...                          ->  Node.value = ...
+  %%  Node.color = ...
+  %%  (requires) nodes.value = {0,1,2,3,4,5}
+
+  \DefMacro{wGraph}{42em}
+  \DefMacro{hGenerator}{20ex}
+  \DefMacro{hSat}{23ex}
+  \DefMacro{wTree}{8em}
+  \DefMacro{hTree}{20ex}
+  \DefMacro{xshiftTree}{0.5em}
+
+  \node (g-Top) at (0, 0) [gridBox, minimum width=\UseMacro{wGraph}, minimum height=\UseMacro{hGenerator}] {};
+  \node (g-Sat) [below = 3ex of g-Top.south] [gridBox, minimum width=\UseMacro{wGraph}, minimum height=\UseMacro{hSat}] {};
+
+  \node (g-Orig) [below right = 0ex and 1em of g-Top.north west] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-Generator) [right = 12em of g-Orig.east] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-New) [below left = 0ex and 1em of g-Top.north east] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+
+  \node (g-TreePreInvocation) [right = 0em of g-Top.west] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-TreeAfterGenerator) [left = 0em of g-Top.east] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  %% \node (g-SatInput) [below right = 0 and 1em of g-Sat.north west] [gridBox, minimum height=\UseMacro{hSat}] {};
+  %% \node (g-SatOutput) [below left = 0 and 1em of g-Sat.north east] [gridBox, minimum height=\UseMacro{hSat}] {};
+
+  \tikzset{level distance=6ex}
+  \tikzstyle{level 1}=[sibling distance=2.2em]
+  \tikzstyle{level 2}=[sibling distance=0.2em]
+  \tikzset{edge from parent/.style={draw, -latex}}
+
+  \tikzset{redNode/.style={circle, draw=red, line width=1pt, inner sep=0, minimum size=2.2em, font=\footnotesize, text=red}}
+  \tikzset{blackNode/.style={circle, draw=black, inner sep=0, minimum size=2.2em, font=\footnotesize, text=black}}
+
+  % tree pre invocation
+  \node (n-TreePreInvocationRoot) [below = 1ex of g-Orig.north, xshift=\UseMacro{xshiftTree}] [blackNode] {$n_0$:4}
+  child[left] {node [redNode] {$n_1$:1}
+    child[left] {node [blackNode] {$n_3$:0}}
+    child[right] {node (n-TreePreInvocation-01) [blackNode] {$n_4$:3}}
+  }
+  child[right] {node [blackNode] {$n_2$:5}
+  };
+
+  % tree after generator
+  \node (n-TreeAfterGeneratorRoot) [below = 1ex of g-Generator.north, xshift=\UseMacro{xshiftTree}] [blackNode] {$n_0$}
+  child[left] {node [redNode] {$n_1$}
+    child[left] {node [blackNode] {$n_3$}}
+    child[right] {node [blackNode] {$n_4$}}
+  }
+  child[right] {node [redNode] {$n_2$}
+    child[left] {node [blackNode] {$n_5$}}
+  };
+
+  % tree after solving
+  \node (n-TreeAfterSolvingRoot) [below = 1ex of g-New.north, xshift=\UseMacro{xshiftTree}] [blackNode] {$n_0$:3}
+  child[left] {node [redNode] {$n_1$:1}
+    child[left] {node [blackNode] {$n_3$:0}}
+    child[right] {node [blackNode] {$n_4$:2}}
+  }
+  child[right] {node [redNode] {$n_2$:4}
+    child[left] {node [blackNode] {$n_5$:5}}
+  };
+
+  \tikzset{sat io box/.style={box, inner sep=0pt, draw=none, fill=none}}
+  \newcommand{\varBlack}{\CodeIn{BLACK}}
+  \newcommand{\varRed}{\CodeIn{RED}}
+
+  % Sat input
+  \node (b-SatInput) [below right = .4em and .2em of g-Sat.north west] [sat io box] {\makecell[l]{
+      \JavaInL{root =} $\set{n_0}$\\
+      \JavaInL{Node.left =} $\set{(n_0\rightarrow n_1), (n_1\rightarrow n_3), (n_2\rightarrow n_5)}$\\
+      \JavaInL{Node.right =} $\set{(n_0\rightarrow n_2), (n_1\rightarrow n_4)}$\\
+      \JavaInL{Node.color =} $\{(n_0\rightarrow\varBlack), (n_1\rightarrow\varRed), (n_2\rightarrow\varRed),$\\
+      \phantom{\JavaInL{Node.colo}}$(n_3\rightarrow\varBlack), (n_4\rightarrow\varBlack), (n_5\rightarrow\varBlack)\}$\\
+      \JavaInL{nodes = } $\set{n_0, n_1, n_2, n_3, n_4, n_5}$\\
+      \JavaInL{nodes.value = } $\set{0, 1, 2, 3, 4, 5}$\\
+      \JavaInL{/* other constraints, e.g., invariants ... */}\\
+  }};
+
+  % Sat output
+  \node (b-SatOutput) [left = .2em of g-Sat.east] [sat io box] {\makecell[l]{
+      \JavaInL{Node.value =} $\{n_0\rightarrow 3, n_1\rightarrow 1,$\\
+      \phantom{\JavaInL{Node.value =} $\{$}$n_2\rightarrow 4, n_3\rightarrow 0,$\\
+      \phantom{\JavaInL{Node.value =} $\{$}$n_4\rightarrow 2, n_5\rightarrow 5\}$\\
+  }};
+
+  % boxes with labels
+  \tikzset{fillDeclarative/.style={fill=blue!20}}
+  \tikzset{fillGenerator/.style={fill=yellow!20}}
+
+  \node (p-GeneratorBoxWest) [right = 3em of g-Orig.east] [coordinate] {};
+  \node (p-GeneratorBoxEast) [right = 1em of g-Generator.east] [coordinate] {};
+  \node (p-GeneratorBoxSouthWest) at (p-GeneratorBoxWest |- g-Generator.south) [coordinate] {};
+  \node (p-GeneratorBoxNorthWest) at (p-GeneratorBoxWest |- g-Generator.north) [coordinate] {};
+  \node (p-GeneratorBoxNorthEast) at (p-GeneratorBoxEast |- g-Generator.north) [coordinate] {};
+  \draw [rounded corners] (p-GeneratorBoxNorthEast) rectangle (p-GeneratorBoxSouthWest);
+  \node (b-GeneratorText) [above right = 0 and 0.3em of p-GeneratorBoxNorthWest] [box, fillGenerator] {generator};
+
+  \node (p-SolverBoxSouthWest) at (g-Sat.south west) [coordinate] {};
+  \node (p-SolverBoxNorthEast) at (g-Sat.north east) [coordinate] {};
+  \node (p-SolverBoxNorthWest) at (g-Sat.north west) [coordinate] {};
+  \draw [rounded corners] (p-SolverBoxNorthEast) rectangle (p-SolverBoxSouthWest);
+  \node (b-SolverText) [above right = 0 and 0.3em of p-SolverBoxNorthWest] [box, fillDeclarative] {\satbasedsol};
+
+  % arrows
+  \draw [->] (g-Orig.east) to node [anno, above, pos=0.13] {add(2)} node (anno-Generate) [anno, above, pos=0.68] {\makecell{generate a red black tree\\with 6 nodes}} (g-Generator.west);
+  \draw [->, rounded corners] (g-Generator.south) |- (b-SolverText.east); % -- (g-TreeAfterGenerator.south |- p-Midway); % -| (g-TreeKoratStart.north);
+  \draw [->] (b-SatInput.east) to node [anno, above, pos=0.5] {solve} (b-SatInput.east -| b-SatOutput.west);
+  \draw [->] (b-SatOutput.north) to (g-New.south -| b-SatOutput.north);
+
+  %% \foreach \l/\r in {g-TreeKoratStart/g-TreeKoratMid, g-TreeKoratMid/g-TreeKoratEnd} {
+  %%   \draw ($(\l.east) + (0.25em, 0)$) -- ($(\l.east)!0.35!(\r.west)$);
+  %%   \draw [dotted] ($(\l.east)!0.35!(\r.west)$) -- ($(\l.east)!0.75!(\r.west)$);
+  %%   \draw [->] ($(\l.east)!0.75!(\r.west)$) -- ($(\r.west) + (0.5em, 0)$);
+  %% }
+
+
+  % highlight solution
+  %% \node (b-Solution) [fit=(g-TreeKoratEnd.north west)(g-TreeKoratEnd.north east)(p-TreeKoratEndLowest.south)] [box, inner sep=0, draw=red!50] {};
+  %% \node (b-SolutionText) [below = 0 of b-Solution |- b-RepOkEnd.south] [box, draw=none] {solution};
+
+
+\end{tikzpicture}

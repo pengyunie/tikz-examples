@@ -1,0 +1,63 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=0.93},
+  gridBox/.style={rectangle, opacity=0, draw=red},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\footnotesize},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\footnotesize},
+  anno/.style={font=\footnotesize},
+]
+
+  %%                              
+  %%                             
+  %%    heap   ---ser-->          --rel formula->       -boolean formula->
+  %%                     Squander                KodKod                    SAT Solver
+  %%   solution<-deser--          <-rel model----       <-boolean model---
+  %%     
+
+  \DefMacro{wSolver}{36em}
+  \DefMacro{hSolver}{18ex}
+  \DefMacro{wSolverBox}{26em}
+  
+  \node (g-Solver) at (0,0) [gridBox, minimum width=\UseMacro{wSolver}, minimum height=\UseMacro{hSolver}] {};
+
+  \node (b-Solver) [left = 0 of g-Solver.east] [rounded box, minimum width=\UseMacro{wSolverBox}, minimum height=\UseMacro{hSolver}] {};
+
+  \DefMacro{wSep}{3em}
+  \tikzset{fillDeclarative/.style={fill=blue!10}}
+  \tikzset{fillGenerator/.style={fill=yellow!10}}
+  \tikzset{fillNormal/.style={fill=gray!20}}
+  \tikzset{beautiful heap/.style={draw, inner sep=2pt, cloud, minimum width=4.2em, minimum height=8ex, line width=1pt, fill=brown!10, font=\small}}
+  \tikzset{beautiful box/.style={rounded box, minimum width=5em, minimum height=5ex, line width=1pt, fillDeclarative}}
+  \tikzset{beautiful square box/.style={box, minimum width=5em, minimum height=3ex, line width=1pt, fillDeclarative}}
+
+  \DefMacro{wSepHeap}{5.2em}
+  \DefMacro{hSepHeap}{2ex}
+
+  \node (b-InputHeap) [above left = \UseMacro{hSepHeap} and \UseMacro{wSepHeap} of b-Solver.west] [beautiful heap] {};
+  \node (b-InputHeapText) at (b-InputHeap) [box, draw=none] {heap};
+  \node (b-OutputSolution) [below left = \UseMacro{hSepHeap} and \UseMacro{wSepHeap} of b-Solver.west] [beautiful heap] {};
+  \node (b-OutputSolutionText) at (b-OutputSolution) [box, draw=none] {solution};
+  
+  \node (b-Squander) [right = 1em of b-Solver.west] [beautiful box, fill=blue!10] {\Squander};
+  \node (b-KodKod) [right = \UseMacro{wSep} of b-Squander.east] [beautiful box] {\KodKod};
+  \node (b-SAT) [right = \UseMacro{wSep} of b-KodKod.east] [beautiful box] {\makecell{SAT Solver\\(outside JVM)}};
+
+  \draw [->] (b-InputHeap) to node [anno, above, xshift=-0.3em]{\makecell{serialize\\heap}} (b-Squander);
+  \draw [->] (b-Squander) to node [anno, below, xshift=-0.3em, yshift=-0.5ex]{\makecell{deserialize\\heap}} (b-OutputSolution);
+
+  \draw [->] (b-Squander) to [bend left=30, looseness=0.8] node (anno-RelFormula) [anno, above]{relational formula} (b-KodKod);
+  \draw [->] (b-KodKod) to [bend left=30, looseness=0.8] node (anno-RelModel) [anno, below]{relational model} (b-Squander);
+
+  \draw [->] (b-KodKod) to [bend left=30, looseness=0.8] node [anno, above]{boolean formula} (b-SAT);
+  \draw [->] (b-SAT) to [bend left=30, looseness=0.8] node [anno, below]{boolean model} (b-KodKod);
+
+  %% \node (b-SolverText) [above = 0 of g-Solver.south] {invoke the \satbasedsol};
+
+  \node (b-Bytecode) [above right = 2ex and -0.5em of b-InputHeap.north west] [beautiful square box, fillDeclarative] {\TDSL bytecode};
+  \node (b-JFSL) at (b-Bytecode.center -| anno-RelFormula) [beautiful square box, fillNormal] {\JFSL spec};
+
+  \draw [dashed, ->] (b-Bytecode.east) to node [anno, above]{parse} (b-JFSL.west);
+  \draw [dashed, ->] (b-JFSL.south) to (anno-RelFormula.north);
+
+\end{tikzpicture}

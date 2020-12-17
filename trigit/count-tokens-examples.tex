@@ -1,0 +1,99 @@
+\newcommand{\FigNumberAboveLineShrink}{0.6mm}
+\newcommand{\FigNumberTokenNoScale}{1.4}
+\newcommand{\FigNumberTokenVSpace}{-0.1mm}
+\newcommand{\FigNumberTokenHSpace}{-0.8mm}
+\newcommand{\FigNumberTokenNoHSpace}{-1.2mm}
+
+\begin{tikzpicture}[
+  thick, scale=0.88,
+  node distance=\FigNumberTokenVSpace and \FigNumberTokenHSpace,
+  every node/.style={scale=0.47},
+  number/.style={rectangle},
+  token/.style={rectangle, scale=1.6, text height=1.5ex, text depth=.25ex, text centered},
+  marker/.style={circle, inner sep=0mm},
+  key/.style={rectangle}
+]
+  %% @TrigItMethod void checkMerge() {
+  %%     if(!TrigIt.hasClass("Mapper") || !TrigIt.hasClass("FieldMapper"))
+  %%         TrigIt.getMethod("simpleName").setProtected(); }
+
+
+  % line 1
+  \node at (0,0) (l1m01) [marker] {};
+  \node [below right = of l1m01] (l1t1) [token] {\CodeIn{@TrigItMethod}};
+  
+  \node [above right = of l1t1] (l1m12) [marker] {};
+  \node [below right = of l1m12] (l1t2) [token] {\CodeIn{void}};
+  
+  \node [above right = of l1t2] (l1m23) [marker] {};
+  \node [below right = of l1m23] (l1t3) [token] {\CodeIn{checkMerge()}};
+  
+  \node [above right = of l1t3] (l1m34) [marker] {};
+  \node [below right = of l1m34] (l1t4) [token] {\CodeIn{\{}};
+  
+  \draw[magenta] ($ (l1m01.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, magenta] {$1$} ($ (l1m12.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[magenta] ($ (l1m12.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, magenta] {$2$} ($ (l1m23.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[magenta] ($ (l1m23.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, magenta] {$3$} ($ (l1m34.west) - (\FigNumberAboveLineShrink,0) $);
+
+  % line 2
+  \node [below right = 5mm and 3mm of l1t1.west] (l2m01) [marker] {};
+  \node [below right = of l2m01] (l2t1) [token] {\CodeIn{if(}};
+  
+  \node [above right = of l2t1] (l2m12) [marker] {};
+  \node [below right = of l2m12] (l2t2) [token] {\CodeIn{!TrigIt.}};
+  
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l2t2] (l2m23) [marker] {};
+  \node [below right = of l2m23] (l2t3) [token] {\CodeIn{hasClass}};
+  
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l2t3] (l2m34) [marker] {};
+  \node [below right = of l2m34] (l2t4) [token] {\CodeIn{(``Mapper")\ ||}};
+  
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenHSpace of l2t4] (l2m45) [marker] {};
+  \node [below right = of l2m45] (l2t5) [token] {\CodeIn{\ !TrigIt.}};
+  
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l2t5] (l2m56) [marker] {};
+  \node [below right = of l2m56] (l2t6) [token] {\CodeIn{hasClass}};
+  
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l2t6] (l2m67) [marker] {};
+  \node [below right = of l2m67] (l2t7) [token] {\CodeIn{(``FieldMapper"))}};
+  
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l2t7] (l2m78) [marker] {};
+  
+  \draw[cyan] ($ (l2m01.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$1$} ($ (l2m12.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[cyan] ($ (l2m12.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$2$} ($ (l2m23.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[cyan] ($ (l2m23.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$3$} ($ (l2m34.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[cyan] ($ (l2m34.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$4$} ($ (l2m45.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[cyan] ($ (l2m45.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$5$} ($ (l2m56.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[cyan] ($ (l2m56.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$6$} ($ (l2m67.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw[cyan] ($ (l2m67.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale, cyan] {$7$} ($ (l2m78.west) - (\FigNumberAboveLineShrink,0) $);
+  
+  % line 3
+  \node [below right = 5mm and 3mm of l2t1.west] (l3m01) [marker] {};
+  \node [below right = of l3m01] (l3t1) [token] {\CodeIn{TrigIt.}};
+
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l3t1] (l3m12) [marker] {};
+  \node [below right = of l3m12] (l3t2) [token] {\CodeIn{getMethod}};
+
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace of l3t2] (l3m23) [marker] {};
+  \node [below right = of l3m23] (l3t3) [token] {\CodeIn{(``simpleName").}};
+
+  \node [above right = \FigNumberTokenVSpace and \FigNumberTokenNoHSpace  of l3t3] (l3m34) [marker] {};
+  \node [below right = of l3m34] (l3t4) [token] {\CodeIn{setProtected(); }};
+
+  \node [above right = of l3t4] (l3m45) [marker] {};
+  \node [below right = of l3m45] (l3t5) [token] {\CodeIn{\}}};
+
+  \draw ($ (l3m01.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale] {$1$} ($ (l3m12.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw ($ (l3m12.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale] {$2$} ($ (l3m23.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw ($ (l3m23.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale] {$3$} ($ (l3m34.west) - (\FigNumberAboveLineShrink,0) $);
+  \draw ($ (l3m34.east) + (\FigNumberAboveLineShrink,0) $) to node[above, scale=\FigNumberTokenNoScale] {$4$} ($ (l3m45.west) - (\FigNumberAboveLineShrink,0) $);
+
+%  % legend
+%   \matrix [draw, above] at (current bounding box.south) {
+%    \node [key, magenta, label=right:Structure] {};
+%    \node [key, cyan, label=right:Trigger] {};
+%    \node [key, red, label=right:Action] {};
+% };
+ 
+  
+\end{tikzpicture}

@@ -1,0 +1,56 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=1.0},
+  gridBox/.style={rectangle, draw=none},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\small},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\small},
+  anno/.style={font=\footnotesize},
+]
+
+  \DefMacro{hJVMBox}{3ex}
+  \DefMacro{wJVMBox}{3em}
+  \DefMacro{hSepJVMBox}{2ex}
+  \DefMacro{wSepJVMBox}{1em}
+  \DefMacro{hSepJVMBoxText}{0.5ex}
+  \DefMacro{hSepSection}{2.5ex}
+
+  \tikzset{jvm box/.style={box, minimum width=\UseMacro{wJVMBox}, minimum height=\UseMacro{hJVMBox}}}
+  \tikzset{jvm anno/.style={anno, yshift=-2pt}}
+
+  \node (b-NoForkJVM) at (0,0) [jvm box, minimum width=2*\UseMacro{wJVMBox}] {JVM};
+  \node (b-NoForkJVMTests) [above = 0 of b-NoForkJVM.north] [jvm anno] {$t_1, t_2, t_3, t_4$};
+
+  \node (b-NoForkText) [below right = \UseMacro{hSepJVMBoxText} and 0 of b-NoForkJVM.south west] [box, draw=none] {(a) \CodeIn{mvn\,\,test} (default behavior)};
+
+  \node (b-Fork1JVM1) [below right = \UseMacro{hSepSection} and 0 of b-NoForkText.south west] [jvm box] {JVM};
+  \node (b-Fork1JVM1Tests) [above = 0 of b-Fork1JVM1.north] [jvm anno] {$t_1$};
+  \node (b-Fork1JVM2) [right = \UseMacro{wSepJVMBox} of b-Fork1JVM1.east] [jvm box] {JVM};
+  \node (b-Fork1JVM2Tests) [above = 0 of b-Fork1JVM2.north] [jvm anno] {$t_2$};
+  \node (b-Fork1JVM3) [right = \UseMacro{wSepJVMBox} of b-Fork1JVM2.east] [jvm box] {JVM};
+  \node (b-Fork1JVM3Tests) [above = 0 of b-Fork1JVM3.north] [jvm anno] {$t_3$};
+  \node (b-Fork1JVM4) [right = \UseMacro{wSepJVMBox} of b-Fork1JVM3.east] [jvm box] {JVM};
+  \node (b-Fork1JVM4Tests) [above = 0 of b-Fork1JVM4.north] [jvm anno] {$t_4$};
+
+  \node (b-Fork1Text) [below right = \UseMacro{hSepJVMBoxText} and 0 of b-Fork1JVM1.south west] [box, draw=none] {(b) \MvnCmdForkIArgs};
+
+  \node (b-Fork2JVM1) [below right = \UseMacro{hSepSection} and 0 of b-Fork1Text.south west] [jvm box] {JVM};
+  \node (b-Fork2JVM1Tests) [above = 0 of b-Fork2JVM1.north] [jvm anno] {$t_1$};
+  \node (b-Fork2JVM2) [below right = \UseMacro{hSepJVMBox} and 0 of b-Fork2JVM1.south west] [jvm box] {JVM};
+  \node (b-Fork2JVM2Tests) [above = 0 of b-Fork2JVM2.north] [jvm anno] {$t_2$};
+  \node (b-Fork2JVM3) [right = \UseMacro{wSepJVMBox} of b-Fork2JVM1.east] [jvm box] {JVM};
+  \node (b-Fork2JVM3Tests) [above = 0 of b-Fork2JVM3.north] [jvm anno] {$t_3$};
+  \node (b-Fork2JVM4) [right = \UseMacro{wSepJVMBox} of b-Fork2JVM2.east] [jvm box] {JVM};
+  \node (b-Fork2JVM4Tests) [above = 0 of b-Fork2JVM4.north] [jvm anno] {$t_4$};
+
+  \node (b-Fork2Text) [below right = \UseMacro{hSepJVMBoxText} and 0 of b-Fork2JVM2.south west] [box, draw=none] {(c) \MvnCmdForkIIArgs};
+
+  \node (p-XAxisStart) [left = 0.5em of b-Fork2Text.south west] [coordinate] {};
+  \node (p-XAxisEnd) [right = 1em of b-Fork2Text.south east] [coordinate] {};
+
+  \foreach \p in {b-NoForkText, b-Fork1Text, b-Fork2Text} {
+    \node (p-XAxisFor-\p) [above = 0ex of \p.north] [coordinate] {};
+    \draw [->] (p-XAxisStart |- p-XAxisFor-\p) to node [pos=1, anno, right, text depth=2pt] {time} (p-XAxisEnd |- p-XAxisFor-\p);
+  }
+
+\end{tikzpicture}

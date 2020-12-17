@@ -1,0 +1,115 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=0.9},
+  gridBox/.style={rectangle, opacity=0, draw=red},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\small},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\small},
+  anno/.style={font=\footnotesize},
+]
+
+  %%
+  %%  Java      |   bytecode     |   JVM
+  %% generator  |  generator     |  getSpec
+  %% DDSL spec  |  DDSL spec     |  generate
+  %% other code |  other code    |  solve
+  %%
+
+
+  \DefMacro{wJava}{9em}
+  \DefMacro{wBytecode}{5em}
+  \DefMacro{wJVM}{9em}
+  \DefMacro{hBox}{35ex}
+  \DefMacro{wBoxSep}{4em}
+
+  \node (g-Java) at (0,0) [gridBox, minimum width=\UseMacro{wJava}, minimum height=\UseMacro{hBox}] {};
+  \node (g-Bytecode) [right = \UseMacro{wBoxSep} of g-Java.east] [gridBox, minimum width=\UseMacro{wBytecode}, minimum height=\UseMacro{hBox}] {};
+  \node (g-JVM) [right = \UseMacro{wBoxSep} of g-Bytecode.east] [gridBox, minimum width=\UseMacro{wJVM}, minimum height=\UseMacro{hBox}] {};
+
+  \tikzset{fillDeclarative/.style={fill=blue!10}}
+  \tikzset{fillGenerator/.style={fill=yellow!10}}
+  \tikzset{fillNormal/.style={fill=gray!20}}
+  \tikzset{beautiful heap/.style={draw, inner sep=2pt, cloud, minimum width=4.2em, minimum height=5.5ex, thin, fill=brown!10}}
+  \tikzset{beautiful box/.style={rounded box, inner sep=3pt, line width=0.5pt, fillNormal}}
+  \tikzset{sub box/.style={box, inner sep=0pt, draw=none, fill=gray!20}}
+
+  \DefMacro{hSubBox}{6ex}
+  \DefMacro{hSubBoxSep}{0.1ex}
+  \DefMacro{wSubBoxJava}{8.9em}
+
+  %% Java part
+  
+  \node (b-Java) [below = 0ex of g-Java.north] [box, minimum width=\UseMacro{wJava}, minimum height=\UseMacro{hBox}] {};
+  \node (b-JavaText) [below = 0 of b-Java.north] [box, draw=none, text depth=0] {BST.java};
+
+  \node (b-Java-Spec) [above = \UseMacro{hSubBoxSep} of b-Java.south] [sub box, minimum width=\UseMacro{wSubBoxJava}, minimum height=\UseMacro{hSubBox}, fillDeclarative] {\makecell[l{p{\UseMacro{wSubBoxJava}}}]{
+      \JavaIn{//} {\scriptsize\TDSL} \JavaIn{Specifications}\\
+      \JavaIn{void add(int x) \{}\\
+      \JavaIn{...D.ensures(...);}\\
+      \hspace{1.15em}\JavaIn{D.exe(this, x);\}}
+  }};
+  \node (b-Java-Generator) [above = \UseMacro{hSubBoxSep} of b-Java-Spec.north] [sub box, minimum width=\UseMacro{wSubBoxJava}, minimum height=\UseMacro{hSubBox}, fillGenerator] {\makecell[l{p{\UseMacro{wSubBoxJava}}}]{
+      \JavaIn{//} \JavaIn{Generator}\\
+      \JavaIn{void genBalTree(...) \{\}}\\
+  }};
+  \node (b-Java-Other) [above = \UseMacro{hSubBoxSep} of b-Java-Generator.north] [sub box, minimum width=\UseMacro{wSubBoxJava}, minimum height=\UseMacro{hSubBox}] {\makecell[l{p{\UseMacro{wSubBoxJava}}}]{
+      \JavaIn{class BST \{}\\
+      \hspace{0.9em}\JavaIn{Node root;\}}\\
+      \JavaIn{class Node \{}\\
+      \hspace{0.9em}\JavaIn{int value;}\\
+      \hspace{0.9em}\JavaIn{Node left, right;\}}
+  }};
+
+  
+  %% Bytecode part
+  \node (b-Bytecode) [below = 0ex of g-Bytecode.north] [box, minimum width=\UseMacro{wBytecode}, minimum height=\UseMacro{hBox}] {};
+  \node (b-BytecodeText) [below = 0 of b-Bytecode.north] [box, draw=none] {BST.class};
+
+  \node (p-BytecodeSubBoxLeft) [right = 0.05em of b-Bytecode.north west] [coordinate] {};
+  \node (p-BytecodeSubBoxRight) [left = 0.05em of b-Bytecode.north east] [coordinate] {};
+  \fill [fillNormal] (b-Java-Other.north -| p-BytecodeSubBoxLeft) rectangle (b-Java-Other.south -| p-BytecodeSubBoxRight);
+  \fill [fillGenerator] (b-Java-Generator.north -| p-BytecodeSubBoxLeft) rectangle (b-Java-Generator.south -| p-BytecodeSubBoxRight);
+  \fill [fillDeclarative] (b-Java-Spec.north -| p-BytecodeSubBoxLeft) rectangle (b-Java-Spec.south -| p-BytecodeSubBoxRight);
+  \node (b-Bytecode-OtherText) at (b-Java-Other.center -| b-Bytecode.center) [box, draw=none] {\makecell{bytecode}};
+  \node (b-Bytecode-GeneratorText) at (b-Java-Generator.center -| b-Bytecode.center) [box, draw=none] {\makecell{\Generator\\bytecode}};
+  \node (b-Bytecode-SpecText) at (b-Java-Spec.center -| b-Bytecode.center) [box, draw=none] {\makecell{\TDSL\\bytecode}};
+
+
+  %% JVM part
+  \DefMacro{hExeBlockSep}{2.2ex}
+
+  \node (b-JVM) [below = 0ex of g-JVM.north] [box, minimum width=\UseMacro{wJVM}, minimum height=\UseMacro{hBox}] {};
+  \node (b-JVMText) [below = 0 of b-JVM.north] [box, draw=none] {JVM};
+
+  \node (b-Generator) [below = 5ex of b-JVM.north] [beautiful box, fillGenerator] {genBalTree()};
+
+  \node (b-Heap) [below=\UseMacro{hExeBlockSep} of b-Generator.south] [beautiful heap] {};
+  \node (b-HeapText) at (b-Heap) [box, draw=none] {heap};
+
+  \node (b-Solver) [below=\UseMacro{hExeBlockSep} of b-Heap.south] [beautiful box, fillDeclarative] {\solvingengine};
+
+  \node (b-Solution) [below=\UseMacro{hExeBlockSep} of b-Solver.south] [beautiful heap] {};
+  \node (b-SolutionText) at (b-Solution) [box, draw=none] {solution};
+
+  %% \draw [->] ($(b-Generator.north) + (0, 0.5*\UseMacro{hExeBlockSep})$) -- node[pos=0, yshift=5pt, rotate=90, font=\tiny]{\dots} (b-Generator.north);
+  \draw [densely dotted, ->] ($(b-Generator.north) + (0, \UseMacro{hExeBlockSep})$) to (b-Generator.north);
+  \draw [->] (b-Generator.south) -- (b-Heap.north);
+  \draw [->] (b-Heap.south) -- (b-Solver.north);
+  \draw [->] (b-Solver.south) -- (b-Solution.north);
+  \draw [->] (b-Solution.south) to ($(b-Solution.south) - (0, 0.75*\UseMacro{hExeBlockSep})$);
+  \draw [densely dotted] ($(b-Solution.south) - (0, 0.75*\UseMacro{hExeBlockSep})$) to ($(b-Solution.south) - (0, 1.25*\UseMacro{hExeBlockSep})$);
+  %% \draw [->] (b-Solution.south) -- node[pos=1, yshift=-3pt, rotate=90, font=\tiny]{\dots} ($(b-Solution.south) - (0, 0.75*\UseMacro{hExeBlockSep})$);
+
+  % DDSL Bytecode --> solver
+  \node (p-Mid-Bytecode-JVM) at ($(b-Bytecode.east)!0.1!(b-JVM.west)$) [coordinate] {};
+  \node (p-Control-1) at (b-Bytecode-SpecText.east -| p-Mid-Bytecode-JVM) [coordinate] {};
+  \node (p-Control-2) at (b-Solver.west -| p-Mid-Bytecode-JVM) [coordinate] {};
+  \draw [rounded corners, dashed, ->] (b-Bytecode-SpecText.east) to (b-Bytecode-SpecText.east -| p-Mid-Bytecode-JVM) to (b-Solver.west -| p-Mid-Bytecode-JVM) to node [anno, above, pos=0.26]{translate} (b-Solver.west);
+
+
+  %% Javac and java
+  \draw [->] (b-Java) to node [above, anno] {javac} (b-Bytecode);
+  \draw [->] (b-Bytecode) to node [above, anno] {java} (b-JVM);
+
+  
+\end{tikzpicture}

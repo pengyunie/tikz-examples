@@ -1,0 +1,80 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=0.88},
+  gridBox/.style={rectangle, opacity=0, draw=red},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\footnotesize},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\footnotesize},
+  anno/.style={font=\footnotesize},
+]
+
+  %%                              
+  %% heap--> setBounds
+  %%   ---> σ = nextCandidate()       
+  %%   |  <heap>.assign(σ)            
+  %%   ------ repOk?
+  %%       N    | Y
+  %%            ------------> solution
+
+  \DefMacro{wSolver}{24em}
+  \DefMacro{hSolver}{52ex}
+  \DefMacro{wSolverBox}{14em}
+
+  \node (g-Solver) at (0,0) [gridBox, minimum width=\UseMacro{wSolver}, minimum height=\UseMacro{hSolver}] {};
+
+  \DefMacro{hSep}{2ex}
+  \tikzset{fillDeclarative/.style={fill=blue!10}}
+  \tikzset{fillGenerator/.style={fill=yellow!10}}
+  \tikzset{fillNormal/.style={fill=gray!20}}
+  \tikzset{beautiful heap/.style={draw, inner sep=2pt, cloud, minimum width=4.2em, minimum height=8ex, line width=1pt, fill=brown!10, font=\small}}
+  \tikzset{beautiful box/.style={rounded box, minimum width=5em, minimum height=4ex, line width=1pt, fillDeclarative}}
+  \tikzset{beautiful square box/.style={box, minimum width=5em, minimum height=3ex, line width=1pt, fillDeclarative}}
+
+  \node (b-SetBounds) [below = 1ex of g-Solver.north] [beautiful box] {\koratFinitization{}\CodeIn{()}};
+  \node (b-InitState) [below = \UseMacro{hSep} of b-SetBounds.south] [beautiful box] {\CodeIn{vars = initState()}};
+  \node (b-HeapAssign) [below = \UseMacro{hSep} of b-InitState.south] [beautiful box] {\CodeIn{heap.assign(vars)}};
+  %% \node (b-Heap) [left = 2pt of b-HeapAssign.center] [beautiful heap] {heap};
+  \node (b-RepOk) [below = \UseMacro{hSep} of b-HeapAssign.south] [beautiful box, diamond, minimum width=7em, aspect=2] {\koratPredicate{}\CodeIn{()}?};
+
+  \node (b-AccessedVarsStackPop) [below right = \UseMacro{hSep} and 0 of b-RepOk.south, anchor=north] [beautiful box] {\CodeIn{var = accessedVarsStack.pop()}};
+  \node (b-VarHasNext) [below = \UseMacro{hSep} of b-AccessedVarsStackPop.south] [beautiful box, diamond, aspect=2.5] {\CodeIn{var.hasNext()}?};
+  \node (b-VarToNext) [below right = \UseMacro{hSep} and 3em of b-VarHasNext.south, anchor=north] [beautiful box] {\CodeIn{var.toNext()}};
+  \node (b-VarToFirst) [below left = \UseMacro{hSep} and 3em of b-VarHasNext.south, anchor=north] [beautiful box] {\CodeIn{var.toFirst()}};
+
+  \node (b-InputHeap) [left = 6em of b-SetBounds.west] [beautiful heap] {};
+  \node (b-InputHeapText) at (b-InputHeap) [box, draw=none] {heap};
+  \node (b-OutputSolution) [right = 5em of b-RepOk.east] [beautiful heap] {};
+  \node (b-OutputSolutionText) at (b-OutputSolution) [box, draw=none] {solution};
+
+  \node (b-Solver) [below = 0 of g-Solver.north, minimum width=\UseMacro{wSolverBox}, minimum height=\UseMacro{hSolver}] [rounded box] {};
+
+  \draw [->] (b-InputHeap.east) to (b-SetBounds.west);
+  \draw [->] (b-SetBounds.south) to (b-InitState.north);
+  \draw [->] (b-InitState.south) to (b-HeapAssign.north);
+  \draw [->] (b-HeapAssign.south) to (b-RepOk.north);
+  %% \draw [->, rounded corners] (b-RepOk.west) to node [anno, above, pos=0.1]{N} +(-2em,0) |- (b-InitState.west);
+  \draw [->] (b-RepOk.east) to node [anno, above, pos=0.05]{Y} (b-OutputSolution.west);
+  \draw [->] (b-RepOk.south) to node [anno, right, pos=0.25]{N} (b-AccessedVarsStackPop.north);
+  \draw [->] (b-AccessedVarsStackPop.south) to (b-VarHasNext.north);
+  \draw [->, rounded corners] (b-VarHasNext.south) to +(0,-0.25*\UseMacro{hSep}) -| node [anno, above, pos=0.25, yshift=-0.5ex]{Y} (b-VarToNext.north);
+  \draw [->, rounded corners] (b-VarHasNext.south) to +(0,-0.25*\UseMacro{hSep}) -| node [anno, above, pos=0.25, yshift=-0.5ex]{N} (b-VarToFirst.north);
+  \draw [->, rounded corners] (b-VarToFirst.west)
+  -- ($(b-VarToFirst.west)+(-0.5em,0)$)
+  |- ($(b-AccessedVarsStackPop.north)+(0,0.75*\UseMacro{hSep})$)
+  -- (b-AccessedVarsStackPop.north);
+  \draw [->, rounded corners] (b-VarToNext.east)
+  -- ($(b-VarToNext.east)+(0.5em,0)$)
+  |- ($(b-HeapAssign.north)+(0,0.75*\UseMacro{hSep})$)
+  -- (b-HeapAssign.north);
+
+  \node (b-Bytecode) [below = 3ex of b-InputHeap.south] [beautiful square box, font=\small, fillDeclarative] {\makecell{\TDSL\\bytecode}};
+  %% \node (anno-Transforming) [below right = 0.5ex and 0 of b-Bytecode.south] [anno] {\rotatebox{270}{transforming}};
+
+  \node (p-SetBounds-connect) at ($(b-SetBounds.west)!0.7!(b-SetBounds.south west)$) [coordinate] {};
+  \node (p-RepOk-connect) at (b-RepOk.west) [coordinate] {};
+  
+  \foreach \b in {p-SetBounds-connect, p-RepOk-connect} {
+    \draw [dashed, ->, rounded corners] (b-Bytecode.east) to +(0.5em, 0) |- (\b);
+  }
+
+\end{tikzpicture}

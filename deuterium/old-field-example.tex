@@ -1,0 +1,58 @@
+\begin{tikzpicture}[
+  line width=0.4pt,
+  node distance=0ex and 0em,
+  every node/.style={scale=0.9},
+  gridBox/.style={rectangle, opacity=0, draw=red},
+  box/.style={rectangle, draw=black, inner sep=2pt, font=\small},
+  rounded box/.style={rectangle, rounded corners, draw=black, inner sep=2pt, font=\small},
+  anno/.style={font=\footnotesize},
+]
+
+  \DefMacro{wGraph}{20em}
+  \DefMacro{hGraph}{12ex}
+  \DefMacro{wTree}{8em}
+  \DefMacro{hTree}{12ex}
+
+  \node (g-Canvas) at (0,0) [gridBox, minimum width=\UseMacro{wGraph}, minimum height=\UseMacro{hGraph}] {};
+
+  \node (g-TreeNew) [left = 4em of g-Canvas.north] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+  \node (g-TreeOld) [right = 4em of g-Canvas.north] [gridBox, minimum width=\UseMacro{wTree}, minimum height=\UseMacro{hTree}] {};
+
+  \DefMacro{hSep}{7ex}
+  \DefMacro{wSepL1}{1.8em}
+  \DefMacro{wSepL2}{0.9em}
+  
+  \tikzset{tNode/.style={circle, draw=black, inner sep=0, minimum size=1em, font=\footnotesize, text=black}}
+  \tikzset{newEdge/.style={draw, -latex}}
+  \tikzset{oldEdge/.style={dashed, -latex}}
+
+  \node (g-TreeNew-0) [below = 1ex of g-TreeNew.north] [tNode] {1};
+  \node (g-TreeNew-l) [below left = \UseMacro{hSep} and \UseMacro{wSepL1} of g-TreeNew-0] [tNode] {0};
+  \node (g-TreeNew-r) [below right = \UseMacro{hSep} and \UseMacro{wSepL1} of g-TreeNew-0] [tNode] {3};
+  \node (g-TreeNew-rl) [below left = \UseMacro{hSep} and \UseMacro{wSepL2} of g-TreeNew-r] [tNode] {2};
+  \node (g-TreeNew-rr) [below right = \UseMacro{hSep} and \UseMacro{wSepL2} of g-TreeNew-r] [tNode] {4};
+
+  \draw [newEdge] (g-TreeNew.north) -- node [anno, left] {root} (g-TreeNew-0);
+  \draw [newEdge] (g-TreeNew-0) -- node [anno, left] {left} (g-TreeNew-l);
+  \draw [newEdge] (g-TreeNew-0) -- node [anno, left, xshift=0.2em, pos=0.7] {right} (g-TreeNew-r);
+  \draw [newEdge] (g-TreeNew-r) -- node [anno, left] {left} (g-TreeNew-rl);
+  \draw [newEdge] (g-TreeNew-r) -- node [anno, left, xshift=0.2em, pos=0.7] {right} (g-TreeNew-rr);
+
+  \draw [oldEdge] ($(g-TreeNew-rr.east)+(0.7em,-0.7ex)$) -- node [anno, right] {old\_root} (g-TreeNew-rr);
+  \draw [oldEdge, bend right] (g-TreeNew-rr) to node [anno, right] {old\_left} (g-TreeNew-r);
+  \draw [oldEdge] (g-TreeNew-rr) to node [anno, below] {old\_right} (g-TreeNew-rl);
+  \draw [oldEdge, bend right] (g-TreeNew-r) to node [anno, right] {old\_left} (g-TreeNew-0);
+  \draw [oldEdge] (g-TreeNew-r) to node [anno, below] {old\_right} (g-TreeNew-l);
+
+  \node (g-TreeOld-0) [below = 1ex of g-TreeOld.north] [tNode] {4};
+  \node (g-TreeOld-l) [below left = \UseMacro{hSep} and \UseMacro{wSepL1} of g-TreeOld-0] [tNode] {3};
+  \node (g-TreeOld-ll) [below left = \UseMacro{hSep} and \UseMacro{wSepL2} of g-TreeOld-l] [tNode] {1};
+  \node (g-TreeOld-lr) [below right = \UseMacro{hSep} and \UseMacro{wSepL2} of g-TreeOld-l] [tNode] {0};
+  \node (g-TreeOld-r) [below right = \UseMacro{hSep} and \UseMacro{wSepL1} of g-TreeOld-0] [tNode] {2};
+  \draw [oldEdge] (g-TreeOld.north) -- node [anno, left] {old\_root} (g-TreeOld-0);
+  \draw [oldEdge] (g-TreeOld-0) -- node [anno, left] {old\_left} (g-TreeOld-l);
+  \draw [oldEdge] (g-TreeOld-l) -- node [anno, left] {old\_left} (g-TreeOld-ll);
+  \draw [oldEdge] (g-TreeOld-l) -- node [anno, right] {old\_right} (g-TreeOld-lr);
+  \draw [oldEdge] (g-TreeOld-0) -- node [anno, right] {old\_right} (g-TreeOld-r);
+
+\end{tikzpicture}

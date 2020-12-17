@@ -1,0 +1,111 @@
+\begin{tikzpicture}[
+  thick,
+  every node/.style={scale=0.5},
+  file/.style={rectangle, scale=1.5, draw=black},
+  note/.style={scale=2},
+  procedure/.style={scale=1.5, rectangle, draw=black,
+    minimum height=18mm},
+  operation/.style={scale=1.5, circle, draw=black,
+    minimum size=5mm},
+  marker/.style={circle, inner sep=0mm, radius=0mm, fill, draw, opacity=0},
+]
+
+  %% Line 1 <.java> - <Compiler> - <.class> - <TrigIt> - <modified.class> - <Test>
+
+  % <java files>
+  \node at (0,0) (markerjava) [marker, opacity=0] {};
+  \node [below = 0mm of markerjava.south] (lJavaFiles) [file] {\rotatebox{270}{Java Files}};
+
+  % <Compiler>
+  \node [right = 3mm of lJavaFiles] (lCompiler) [procedure] {\textsc{Compiler}};
+
+  % <java files> - <Compiler>
+  \draw [->, semithick] (lJavaFiles.east) -- (lCompiler.west |- lJavaFiles.east);
+
+  % <class files>
+  \node [right = 3mm of lCompiler.east] (lClzFiles) [file] {\rotatebox{270}{Class Files}};
+
+  % <Compiler> - <class files>
+  \draw [->, semithick] (lCompiler.east |- lClzFiles.west) -- (lClzFiles.west);
+
+  % <TrigIt>
+  \node [right = 2mm of lClzFiles.east] (lTrigIt) [procedure, minimum width=5cm, minimum height=30mm, fill=blue!10] {};
+
+  % <Test>
+  \node [right = 4mm of lTrigIt.east] (lTest) [procedure, yshift=3mm] {\textsc{Test/Execute}};
+
+  % <TrigIt> - <Test>
+  \draw [->, semithick] (lTrigIt.east) -- (lTest.west |- lTrigIt.east);
+
+  %% Inside TrigIt
+  \node [right = 8mm of lTrigIt.west] (lTrigItMethods) [file] {\rotatebox{270}{\Tool Specs}};
+
+  % <class files> - <TrigItMethod>
+  \draw [->, dashed] (lClzFiles.east) to node[above = 1.2mm, note, scale=.75, xshift=1.5mm] (tRewrite) {\rotatebox{0}{rewrite}} (lTrigItMethods.west);
+  \node [above = -1ex of tRewrite] [note, scale=.75] {\textcircled{2}};
+
+  \node at ($(lTrigItMethods.east)!0.25!(lTrigIt.east)$) (lEvaluate) [operation] {};
+  %\node [above right = 0mm of lEvaluate.north east] (lEvaluateText) [note, scale=.85];
+  \node at ($(lTrigItMethods.east)!0.68!(lTrigIt.east)$) (lExecute) [operation, shape=isosceles triangle] {};
+  %\node [above right = 0mm of lExecute.north east] (lExecuteText) [note, scale=.85];
+
+  \node [above = 0.2mm of lEvaluate] [note, scale=.75] (tEvaluate) {\rotatebox{0}{evaluate}};
+  \node [above = -1ex of tEvaluate] [note, scale=.75] {\textcircled{3}};
+  \node [below = 0.2mm of lExecute.right side] [note, scale=.75] (tExecute) {\rotatebox{0}{apply}};
+  \node [below = -1ex of tExecute] [note, scale=.75] {\textcircled{4}};
+
+  \draw [->, dashed] (lTrigItMethods.east) to (lEvaluate.west);
+  \draw [dashed] (lEvaluate.east) to  (lExecute.west);
+  \draw [semithick] (lExecute.east) to  (lTrigIt.east);
+
+  % <class files> \-/ <evaluate>
+  \node [below = 4.5ex of lClzFiles] (msClzFiles) [marker] {};
+  \node [above right = -.5ex and -.2em of msClzFiles] [note, scale=.75] {\textcircled{1}};
+  \draw [dashed] (lClzFiles.south) -- (msClzFiles);
+  %% \draw [->, dashed] (msClzFiles) -| (lEvaluate.south);
+
+  % <class files> /--\ <execute>
+  \node [above = 9ex of lClzFiles.center] (mneClzFiles) [marker] {};
+  \draw [semithick] (lClzFiles.north) -- (mneClzFiles);
+  \draw [semithick] (mneClzFiles) -| (lExecute.east);
+
+  %% Line 2 <build> <warning> <patch>
+
+  % <build configuration files> -| <evaluate>
+  \node at (msClzFiles -| lCompiler.south) (lBuildConfig) [file, xshift=-4mm, align=center] {Build Configuration \\ Issue Tracker \\ System Time};
+  \draw [->, dashed] (lBuildConfig.east) -| (lEvaluate.south);
+
+  % <evaluate branch>
+  \node at ($(lEvaluate.east)!0.618!(lExecute.west)$) (mEvaluateBranch) [marker] {};
+
+  % <evaluate> |- <warn>
+  \node [below = 1mm of lTest.south] (lWarning) [file] {Warning Messages};
+  \node at (lWarning -| mEvaluateBranch) (msEvaluateBranch) [marker] {};
+  \draw [dashed] (mEvaluateBranch) -- (msEvaluateBranch);
+  \draw [->, dashed] (msEvaluateBranch) |- (lWarning.west);
+
+  % <evaluate> |- <patch>
+  \node [below = 1mm of lWarning.south] (lPatch) [file] {Patch to Java Files};
+  \node at (msEvaluateBranch |- lPatch) (mssEvaluateBranch) [marker] {};
+  \draw [dashed] (msEvaluateBranch) -- (mssEvaluateBranch);
+  \draw [->, dashed] (mssEvaluateBranch) to (lPatch.west);
+
+  %% TrigIt text
+  \node [below = 0mm of lTrigIt.north] (lTrigItText) [note] {\Tool};
+
+  % markers
+  %% \node [below = 1mm of lJavaFiles] (bmarkerjava) [marker] {};
+  %% \node [right = 16mm of bmarkerjava.center] (bmarkercompiler) [marker] {};
+  %% \node [right = 16mm of bmarkercompiler.center] (bmarkerclz) [marker] {};
+  %% \node [right = 16mm of bmarkerclz.center] (bmarkertrigit) [marker] {};
+  %% \node [right = 16mm of bmarkertrigit.center] (bmarkermclz) [marker] {};
+  %% \node [right = 16mm of bmarkermclz.center] (bmarkertest) [marker] {};
+
+  % <TrigIt>\<.java>
+  %% \draw [->, bend left] ($(trigit.south west)!0.25!(trigit.south east)$) to node[below] {\huge Patch to Java File} (bmarkerjava.center);
+
+  %% % <TrigIt>\<User>
+  %% \node [below right = 5mm and 0mm of bmarkertrigit.center] (user) [rectangle] {\huge Warning Message to User};
+  %% \draw [->, bend right] (trigit.south) to (user.north west);
+
+\end{tikzpicture}
